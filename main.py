@@ -41,7 +41,7 @@ def register():
             return "Authentication error"
 
     host = request.json['hostname']
-    file = os.path.join(path, host)
+    file = os.path.join(path, host) + ".json"
 
     if 'targets' not in request.json.keys():
         return "Error: targets missing"
