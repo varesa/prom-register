@@ -55,8 +55,10 @@ def register():
         hostfile.write(get_config(targets))
 
     if exists:
+        print("Updated {}".format(file))
         return "OK"
     else:
+        print("Created {}".format(file))
         return "Created"
 
 
