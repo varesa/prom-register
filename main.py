@@ -1,6 +1,7 @@
 import datetime
 import os
 import sys
+import json
 
 from flask import Flask, request
 
@@ -20,20 +21,17 @@ if 'CONFIG_PATH' not in os.environ.keys():
 path = os.environ['CONFIG_PATH']
 
 
-template = """[
-    {{
-        "targets": ["{}"]
-    }}
-]"""
-
-
-def get_config(hostname):
-    return template.format(hostname)
+def get_config(targets):
+    return json.dumps([
+        {
+            "targets": targets,
+        }
+    ])
 
 
 @app.route('/')
 def root():
-    return 'Please POST {"hostname": "..." [, "token": "..."]} to /register'
+    return 'Please POST {"hostname": "...", "targets": ["..."], "token": "(optional)"]} to /register'
 
 
 @app.route('/register', methods=['POST'])
@@ -45,10 +43,16 @@ def register():
     host = request.json['hostname']
     file = os.path.join(path, host)
 
+    if 'targets' not in request.json.keys():
+        return "Error: targets missing"
+    targets = request.json['targets']
+    if not isinstance(targets, list):
+        return "Error: targets should be an array"
+
     exists = os.path.isfile(file)
 
     with open(os.path.join(path, host), 'w') as hostfile:
-        hostfile.write(get_config(host))
+        hostfile.write(get_config(targets))
 
     if exists:
         return "OK"
