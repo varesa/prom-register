@@ -51,8 +51,8 @@ def register():
 
     exists = os.path.isfile(file)
 
-    with open(os.path.join(path, host), 'w') as hostfile:
-        hostfile.write(get_config(targets))
+    with open(os.path.join(path, file), 'w') as f:
+        f.write(get_config(targets))
 
     if exists:
         print("Updated {}".format(file))
